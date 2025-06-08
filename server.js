@@ -15,6 +15,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve static frontend files from the "public" folder
+app.use(express.static("public"));
+
 connectDB(); // Connect to MongoDB
 app.use("/api/auth", authRoutes);  // Enable authentication routes
 app.use("/api/transactions", transactionRoutes);
