@@ -2,7 +2,7 @@ const express = require("express");
 const Report = require("../models/report");
 const router = express.Router();
 const auth = require('../middleware/auth');
-const Transaction = require('../models/Transaction');
+const Transaction = require('../models/transaction');
 const { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, startOfYear, endOfYear } = require('date-fns');
 
 // Generate Monthly Report
