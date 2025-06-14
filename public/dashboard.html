@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker | Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Authentication Check -->
+    <script>
+        if (!localStorage.getItem("token")) {
+            alert("You must be logged in to access the dashboard.");
+            window.location.href = "index.html";  // Redirect to login/signup page
+        }
+    </script>
+
+    <header>
+        <div class="logo">
+            <h1>Finance Tracker Dashboard</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="budget.html">Budget</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="overview">
+            <h2>Welcome to Your Dashboard</h2>
+            <p>Track your finances and manage your budget efficiently.</p>
+        </section>
+
+        <section class="transactions">
+            <h2>Recent Transactions</h2>
+            <ul id="transactionList">
+                <!-- Transactions will be dynamically loaded here -->
+            </ul>
+        </section>
+
+        <section class="budget">
+            <h2>Budget Overview</h2>
+            <p>Your current budget allocation.</p>
+            <div id="budgetDetails">
+                <!-- Budget details will be dynamically loaded here -->
+            </div>
+            
+            <h3>Set Your Budget</h3>
+            <form id="budgetForm">
+                <input type="number" id="budgetAmount" placeholder="Enter budget amount" required>
+                <button type="submit">Update Budget</button>
+            </form>
+        </section>
+
+        <section class="add-transaction">
+            <h2>Add a New Transaction</h2>
+            <form id="transactionForm">
+                <input type="text" id="transactionDescription" placeholder="Description" required>
+                <input type="number" id="transactionAmount" placeholder="Amount" required>
+                <label for="transactionType">Transaction Type:</label>
+                <select id="transactionType" name="transactionType">
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <button type="submit">Add Transaction</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Finance Tracker | All Rights Reserved</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

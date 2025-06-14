@@ -3,38 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Tracker | Home</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Finance Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        #app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main.container {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
+            width: 100%;
+            background: #222;
+            color: #fff;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .welcome-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <h1>Finance Tracker</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="transactions.html">Transactions</a></li>
-                <li><a href="budget.html">Budget</a></li>
-                <li><a href="reports.html">Reports</a></li>
-                <li><a href="#">Login</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section class="hero">
-            <img src="/image/finance.jpeg" alt="Finance Management" class="banner-img">
-            <div class="hero-text">
-                <h2>Take Control of Your Finances</h2>
-                <p>Track your spending, set budgets, and make smarter financial decisions effortlessly.</p>
-                <a href="dashboard.html" class="cta-button">Get Started</a>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="#">Finance Tracker</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" data-page="dashboard">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" data-page="transactions">Transactions</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" data-page="budget">Budget</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" data-page="reports">Reports</a></li>
+                    </ul>
+                    <div class="d-flex">
+                        <button class="btn btn-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                        <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
+                    </div>
+                </div>
             </div>
-        </section>
-    </main>
+        </nav>
 
-    <footer>
-        <p>&copy; 2025 Finance Tracker | All Rights Reserved</p>
-    </footer>
+        <!-- Main Content -->
+        <main class="container mt-4">
+            <div class="text-center mb-5" id="welcome-hero">
+                <img src="image/finance.jpeg" alt="Finance Illustration" class="welcome-image" />
+                <h1 class="display-5 fw-bold">Welcome to Finance Tracker!</h1>
+                <p class="lead">Take control of your finances, track your spending, and achieve your goals with ease.</p>
+            </div>
+            <div id="content"></div>
+        </main>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Login</h5></div>
+                    <div class="modal-body">
+                        <form id="loginForm">
+                            <input type="email" class="form-control mb-2" id="loginEmail" placeholder="Email" required>
+                            <input type="password" class="form-control mb-2" id="loginPassword" placeholder="Password" required>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Modal -->
+        <div class="modal fade" id="signupModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header"><h5 class="modal-title">Sign Up</h5></div>
+                    <div class="modal-body">
+                        <form id="signupForm">
+                            <input type="text" class="form-control mb-2" id="signupName" placeholder="Name" required>
+                            <input type="email" class="form-control mb-2" id="signupEmail" placeholder="Email" required>
+                            <input type="password" class="form-control mb-2" id="signupPassword" placeholder="Password" required>
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; <span id="footer-year"></span> Finance Tracker | All Rights Reserved</footer>
+
+    <script>
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>

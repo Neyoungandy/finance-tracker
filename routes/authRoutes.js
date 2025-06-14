@@ -7,46 +7,132 @@ const User = require("../models/User.js");
 
 const router = express.Router();
 
+// Validation middleware
+const validateSignup = [
+    check("name").trim().notEmpty().withMessage("Name is required"),
+    check("email").isEmail().withMessage("Valid email is required"),
+    check("password")
+        .isLength({ min: 6 })
+        .withMessage("Password must be at least 6 characters long")
+        .matches(/\d/)
+        .withMessage("Password must contain a number")
+];
+
+const validateLogin = [
+    check("email").isEmail().withMessage("Valid email is required"),
+    check("password").notEmpty().withMessage("Password is required")
+];
+
 // User Signup
-router.post("/signup", [
-    check("name", "Name is required").not().isEmpty(),
-    check("email", "Please provide a valid email").isEmail(),
-    check("password", "Password must be 6+ characters").isLength({ min: 6 })
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
-    const { name, email, password } = req.body;
-
+router.post("/signup", validateSignup, async (req, res) => {
     try {
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ msg: "User already exists" });
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user = new User({ name, email, passwordHash: hashedPassword });
+        const { name, email, password } = req.body;
+
+        // Check if user already exists
+        let user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        // Create new user
+        user = new User({
+            name,
+            email,
+            password
+        });
+
         await user.save();
 
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-        res.json({ token });
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
+
+        res.status(201).json({
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
     } catch (error) {
-        res.status(500).json({ msg: "Server error" });
+        console.error("Signup error:", error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
 // User Login
-router.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+router.post("/login", validateLogin, async (req, res) => {
     try {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email, password } = req.body;
+
+        // Check if user exists
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ msg: "Invalid credentials" });
+        if (!user) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
 
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
-        if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
+        // Verify password
+        const isMatch = await user.comparePassword(password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
 
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-        res.json({ token });
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "24h" }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
     } catch (error) {
-        res.status(500).json({ msg: "Server error" });
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+// Get current user route
+router.get("/me", async (req, res) => {
+    try {
+        const token = req.header("Authorization")?.replace("Bearer ", "");
+        if (!token) {
+            return res.status(401).json({ message: "No token, authorization denied" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId).select("-password");
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error("Get user error:", error);
+        res.status(401).json({ message: "Token is not valid" });
     }
 });
 
